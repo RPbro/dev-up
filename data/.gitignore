@@ -1,0 +1,6 @@
+*
+!.gitignore
+!composer
+!mysql
+!kafka
+!zookeeper

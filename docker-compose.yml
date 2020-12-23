@@ -1,0 +1,113 @@
+version: "3"
+services:
+  nginx:
+    container_name: ${NGINX_CONTAINER_NAME}
+    image: ${NGINX_IMAGE}:${NGINX_TAG}
+    ports:
+      - ${NGINX_HTTP_HOST_PORT}:80
+    command: /usr/sbin/nginx -g "daemon off;"
+    volumes:
+      - ${PROJECT_DIR}:/www/:rw
+      - ${NGINX_CONFD_DIR}:/etc/nginx/conf.d/:rw
+      - ${NGINX_CONF_FILE}:/etc/nginx/nginx.conf:ro
+      - ${NGINX_LOG_DIR}:/var/log/nginx/:rw
+    networks:
+      - default
+
+  mysql:
+    container_name: ${MYSQL_CONTAINER_NAME}
+    image: ${MYSQL_IMAGE}:${MYSQL_TAG}
+    ports:
+      - "${MYSQL_HOST_PORT}:3306"
+    volumes:
+      - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
+      - ${MYSQL_DATA_DIR}:/var/lib/mysql/:rw
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+    restart: always
+    networks:
+      - default
+
+  redis:
+    container_name: ${REDIS_CONTAINER_NAME}
+    image: ${REDIS_IMAGE}:${REDIS_TAG}
+    ports:
+      - "${REDIS_HOST_PORT}:6379"
+    volumes:
+      - ${REDIS_CONF_FILE}:/etc/redis.conf:ro
+    restart: always
+    entrypoint: [ "redis-server", "/etc/redis.conf" ]
+    networks:
+      - default
+
+  #  zookeeper:
+  #    container_name: ${ZOOKEEPER_CONTAINER_NAME}
+  #    image: ${ZOOKEEPER_IMAGE}
+  #    volumes:
+  #      - ${ZOOKEEPER_DATA_DIR}:/data
+  #    ports:
+  #      - ${ZOOKEEPER_HOST_PORT}:${ZOOKEEPER_HOST_PORT}
+  #
+  #  kafka:
+  #    container_name: ${KAFKA_CONTAINER_NAME}
+  #    image: ${KAFKA_IMAGE}
+  #    ports:
+  #      - ${KAFKA_HOST_PORT}:${KAFKA_HOST_PORT}
+  #    environment:
+  #      KAFKA_BROKER_ID: 0
+  #      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_ADVERTISED_LISTENERS}:${KAFKA_HOST_PORT}
+  #      KAFKA_CREATE_TOPICS: "dev:2:0"
+  #      KAFKA_ZOOKEEPER_CONNECT: ${ZOOKEEPER_CONTAINER_NAME}:${ZOOKEEPER_HOST_PORT}
+  #      KAFKA_LISTENERS: PLAINTEXT://${KAFKA_LISTENERS}:${KAFKA_HOST_PORT}
+  #    volumes:
+  #      - ${KAFKA_LOG_DIR}:/kafka
+  #    depends_on:
+  #      - zookeeper
+
+  php72:
+    container_name: ${PHP72_CONTAINER_NAME}
+    image: ${PHP72_FPM_IMAGE}:${PHP72_FPM_TAG}
+    volumes:
+      - ${PROJECT_DIR}:/www/:rw
+      - ${PHP72_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
+      - ${PHP72_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ${PHP72_EXTENSION_CONF_FILE}:/usr/local/etc/php/conf.d/php-extension.ini:rw
+      - ${COMPOSER_HOME}:/tmp/composer/:rw
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    networks:
+      - default
+
+  php73:
+    container_name: ${PHP73_CONTAINER_NAME}
+    image: ${PHP73_FPM_IMAGE}:${PHP73_FPM_TAG}
+    volumes:
+      - ${PROJECT_DIR}:/www/:rw
+      - ${PHP73_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
+      - ${PHP73_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ${PHP73_EXTENSION_CONF_FILE}:/usr/local/etc/php/conf.d/php-extension.ini:rw
+      - ${COMPOSER_HOME}:/tmp/composer:rw
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    networks:
+      - default
+
+  php74:
+    container_name: ${PHP74_CONTAINER_NAME}
+    image: ${PHP74_FPM_IMAGE}:${PHP74_FPM_TAG}
+    volumes:
+      - ${PROJECT_DIR}:/www/:rw
+      - ${PHP74_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
+      - ${PHP74_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ${PHP74_EXTENSION_CONF_FILE}:/usr/local/etc/php/conf.d/php-extension.ini:rw
+      - ${COMPOSER_HOME}:/tmp/composer:rw
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    networks:
+      - default
+
+networks:
+  default:

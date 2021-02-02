@@ -64,36 +64,6 @@ services:
   #    depends_on:
   #      - zookeeper
 
-  php72:
-    container_name: ${PHP72_CONTAINER_NAME}
-    image: ${PHP72_FPM_IMAGE}:${PHP72_FPM_TAG}
-    volumes:
-      - ${PROJECT_DIR}:/www/:rw
-      - ${PHP72_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
-      - ${PHP72_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
-      - ${PHP72_EXTENSION_CONF_FILE}:/usr/local/etc/php/conf.d/php-extension.ini:rw
-      - ${COMPOSER_HOME}:/tmp/composer/:rw
-    restart: always
-    cap_add:
-      - SYS_PTRACE
-    networks:
-      - default
-
-  php73:
-    container_name: ${PHP73_CONTAINER_NAME}
-    image: ${PHP73_FPM_IMAGE}:${PHP73_FPM_TAG}
-    volumes:
-      - ${PROJECT_DIR}:/www/:rw
-      - ${PHP73_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
-      - ${PHP73_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
-      - ${PHP73_EXTENSION_CONF_FILE}:/usr/local/etc/php/conf.d/php-extension.ini:rw
-      - ${COMPOSER_HOME}:/tmp/composer:rw
-    restart: always
-    cap_add:
-      - SYS_PTRACE
-    networks:
-      - default
-
   php74:
     container_name: ${PHP74_CONTAINER_NAME}
     image: ${PHP74_FPM_IMAGE}:${PHP74_FPM_TAG}

@@ -45,22 +45,6 @@ export KAFKA_LISTENERS = 0.0.0.0
 # composer
 export COMPOSER_HOME = ./data/composer
 
-# php7.2
-export PHP72_CONTAINER_NAME = dev-php72
-export PHP72_FPM_IMAGE = dev-php72
-export PHP72_FPM_TAG = 1.0
-export PHP72_PHP_CONF_FILE=./conf/php/php72/php.ini
-export PHP72_FPM_CONF_FILE=./conf/php/php72/php-fpm.conf
-export PHP72_EXTENSION_CONF_FILE=./conf/php/php72/php-extension.ini
-
-# php7.3
-export PHP73_CONTAINER_NAME = dev-php73
-export PHP73_FPM_IMAGE = dev-php73
-export PHP73_FPM_TAG = 1.0
-export PHP73_PHP_CONF_FILE=./conf/php/php73/php.ini
-export PHP73_FPM_CONF_FILE=./conf/php/php73/php-fpm.conf
-export PHP73_EXTENSION_CONF_FILE=./conf/php/php73/php-extension.ini
-
 # php7.4
 export PHP74_CONTAINER_NAME = dev-php74
 export PHP74_FPM_IMAGE = dev-php74
@@ -69,7 +53,7 @@ export PHP74_PHP_CONF_FILE=./conf/php/php74/php.ini
 export PHP74_FPM_CONF_FILE=./conf/php/php74/php-fpm.conf
 export PHP74_EXTENSION_CONF_FILE=./conf/php/php74/php-extension.ini
 
-build: build-nginx build-mysql build-redis build-php72 build-php73 build-php74
+build: build-nginx build-mysql build-redis build-php74
 
 start:
 	docker-compose up -d
@@ -92,12 +76,6 @@ build-mysql:
 
 build-redis:
 	docker build -t ${REDIS_IMAGE}:${REDIS_TAG} -f Dockerfiles/redis.Dockerfile .
-
-build-php72:
-	docker build -t ${PHP72_FPM_IMAGE}:${PHP72_FPM_TAG} -f Dockerfiles/php72.Dockerfile .
-
-build-php73:
-	docker build -t ${PHP73_FPM_IMAGE}:${PHP73_FPM_TAG} -f Dockerfiles/php73.Dockerfile .
 
 build-php74:
 	docker build -t ${PHP74_FPM_IMAGE}:${PHP74_FPM_TAG} -f Dockerfiles/php74.Dockerfile .

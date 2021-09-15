@@ -18,7 +18,7 @@ services:
     container_name: ${MYSQL_CONTAINER_NAME}
     image: ${MYSQL_IMAGE}:${MYSQL_TAG}
     ports:
-      - "${MYSQL_HOST_PORT}:3306"
+      - ${MYSQL_HOST_PORT}:3306
     volumes:
       - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
       - ${MYSQL_DATA_DIR}:/var/lib/mysql/:rw
@@ -32,11 +32,54 @@ services:
     container_name: ${REDIS_CONTAINER_NAME}
     image: ${REDIS_IMAGE}:${REDIS_TAG}
     ports:
-      - "${REDIS_HOST_PORT}:6379"
+      - ${REDIS_HOST_PORT}:6379
     volumes:
       - ${REDIS_CONF_FILE}:/etc/redis.conf:ro
     restart: always
-    entrypoint: [ "redis-server", "/etc/redis.conf" ]
+    entrypoint: ["redis-server", "/etc/redis.conf"]
+    networks:
+      - default
+
+  rabbitmq:
+    container_name: ${RABBIT_CONTAINER_NAME}
+    image: ${RABBIT_IMAGE}:${RABBIT_TAG}
+    ports:
+      - ${RABBIT_AMQP_PORT}:5672
+      - ${RABBIT_HTTP_PORT}:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_ROOT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_ROOT_PASSWORD}
+    volumes:
+      - ${RABBIT_DATA_DIR}:/var/lib/rabbitmq
+    restart: always
+    networks:
+      - default
+
+  pulsar:
+    container_name: ${PULSAR_CONTAINER_NAME}
+    image: ${PULSAR_IMAGE}:${PULSAR_TAG}
+    ports:
+      - ${PULSAR_PORT}:6650
+      - ${PULSAR_HTTP_PORT}:8080
+    environment:
+      PULSAR_MEM: " -Xms512m -Xmx1024m -XX:MaxDirectMemorySize=2g"
+    volumes:
+      - ${PULSAR_DATA_DIR}:/pulsar/data
+      - ${PULSAR_CONF_DIR}:/pulsar/conf
+    command: /bin/bash -c "bin/pulsar standalone"
+    restart: always
+    networks:
+      - default
+
+  pulsar-dashboard:
+    container_name: dev-pulsar-dashboard
+    image: apachepulsar/pulsar-dashboard
+    depends_on:
+      - pulsar
+    ports:
+      - "8081:80"
+    environment:
+      - SERVICE_URL=http://pulsar:${PULSAR_HTTP_PORT}
     networks:
       - default
 
@@ -63,21 +106,6 @@ services:
   #      - ${KAFKA_LOG_DIR}:/kafka
   #    depends_on:
   #      - zookeeper
-
-  php74:
-    container_name: ${PHP74_CONTAINER_NAME}
-    image: ${PHP74_FPM_IMAGE}:${PHP74_FPM_TAG}
-    volumes:
-      - ${PROJECT_DIR}:/www/:rw
-      - ${PHP74_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
-      - ${PHP74_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
-      - ${PHP74_EXTENSION_CONF_FILE}:/usr/local/etc/php/conf.d/php-extension.ini:rw
-      - ${COMPOSER_HOME}:/tmp/composer:rw
-    restart: always
-    cap_add:
-      - SYS_PTRACE
-    networks:
-      - default
 
 networks:
   default:

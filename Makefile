@@ -26,6 +26,25 @@ export REDIS_TAG = 1.0
 export REDIS_HOST_PORT=6379
 export REDIS_CONF_FILE=./conf/redis/redis.conf
 
+# rabbitmq
+export RABBIT_CONTAINER_NAME = dev-rabbitmq
+export RABBIT_IMAGE = dev-rabbitmq
+export RABBIT_TAG = 1.0
+export RABBIT_AMQP_PORT = 5672
+export RABBIT_HTTP_PORT = 15672
+export RABBIT_ROOT_USER=root
+export RABBIT_ROOT_PASSWORD=123456
+export RABBIT_DATA_DIR=./data/rabbitmq
+
+# pulsar
+export PULSAR_CONTAINER_NAME = dev-pulsar
+export PULSAR_IMAGE = dev-pulsar
+export PULSAR_TAG = 1.0
+export PULSAR_PORT = 6650
+export PULSAR_HTTP_PORT = 8080
+export PULSAR_CONF_DIR=./conf/pulsar
+export PULSAR_DATA_DIR=./data/pulsar
+
 # zookeeper
 export ZOOKEEPER_CONTAINER_NAME = dev-zookeeper
 export ZOOKEEPER_IMAGE = wurstmeister/zookeeper
@@ -42,18 +61,7 @@ export KAFKA_LOG_DIR = ./log/kafka
 export KAFKA_ADVERTISED_LISTENERS = docker.for.mac.host.internal
 export KAFKA_LISTENERS = 0.0.0.0
 
-# composer
-export COMPOSER_HOME = ./data/composer
-
-# php7.4
-export PHP74_CONTAINER_NAME = dev-php74
-export PHP74_FPM_IMAGE = dev-php74
-export PHP74_FPM_TAG = 1.0
-export PHP74_PHP_CONF_FILE=./conf/php/php74/php.ini
-export PHP74_FPM_CONF_FILE=./conf/php/php74/php-fpm.conf
-export PHP74_EXTENSION_CONF_FILE=./conf/php/php74/php-extension.ini
-
-build: build-nginx build-mysql build-redis build-php74
+build: build-nginx build-mysql build-redis build-rabbitmq build-pulsar
 
 start:
 	docker-compose up -d
@@ -77,5 +85,8 @@ build-mysql:
 build-redis:
 	docker build -t ${REDIS_IMAGE}:${REDIS_TAG} -f Dockerfiles/redis.Dockerfile .
 
-build-php74:
-	docker build -t ${PHP74_FPM_IMAGE}:${PHP74_FPM_TAG} -f Dockerfiles/php74.Dockerfile .
+build-rabbitmq:
+	docker build -t ${RABBIT_IMAGE}:${RABBIT_TAG} -f Dockerfiles/rabbitmq.Dockerfile .
+
+build-pulsar:
+	docker build -t ${PULSAR_IMAGE}:${PULSAR_TAG} -f Dockerfiles/pulsar.Dockerfile .
